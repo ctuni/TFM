@@ -1,0 +1,125 @@
+import tkinter 
+from tkinter import messagebox
+from tkinter import filedialog
+import os
+import sys
+import platform
+import subprocess
+
+app = tkinter.Tk()
+app.title("App")
+app.geometry('700x750+200+200')
+lbl=tkinter.Label(app, text="")
+o_sys=platform.system()
+
+def retrieve_SRR():
+    lbl.config(text="Downloading your selected fastq.gz file.")
+    SRR = text_Widget.get("1.0",'end-1c')
+    first_digits=SRR[0:6]
+    last_digits='00'+SRR[-1:]
+    ftp_link='ftp://ftp.sra.ebi.ac.uk/vol1/fastq/'+first_digits+'/'+last_digits+'/'+SRR+'/'+SRR+'.fastq.gz'
+    if 'Linux' in o_sys:
+        os.system('cd ../')
+        os.system('wget '+ftp_link)
+    elif 'Windows' in o_sys:
+        os.system('cd ../')
+        os.system('curl.exe -O '+ftp_link)
+    lbl.config(text="Done!")
+
+
+def unTar():
+    lbl.config(text="Extracting the fastq file. This takes a while and freezes the app, don't close it!")
+    SRR= text_Widget.get("1.0",'end-1c')
+    if 'Linux' in o_sys:
+        os.system('gunzip '+SRR+'.fastq.gz')
+        os.system('rm '+SRR+'.fastq.gz')
+    elif 'Windows' in o_sys:
+        os.system('gzip -d '+SRR+'.fastq.gz')
+        os.system('del '+SRR+'.fastq.gz')
+    lbl.config(text="Done!")
+
+def download_Genome():
+    lbl.config(text="Downloading and extracting reference genome. This takes a while and freezes the app, don't close it!")
+    if 'Linux' in o_sys:
+        os.system('bash download_genome_index.sh')
+    elif 'Windows' in o_sys:
+        subprocess.check_call(['wsl', 'python3','download_genome_index.py'])
+    lbl.config(text="Done")
+
+def install_programs():
+    if 'Linux' in o_sys:
+        print(os.system('bash anaconda_setup.sh'))
+    if 'Windows' in o_sys:
+        print(subprocess.check_call(['wsl', 'python3','anaconda_setup.py']))
+
+def chooseDir():
+    app.sourceFolder =  filedialog.askdirectory(parent=app, initialdir= "/home/", title='Please select a directory')
+    app.sourceFolder=app.sourceFolder+'/'
+    return
+
+
+def chooseFile():
+    app.sourceFile = filedialog.askopenfilename(parent=app, initialdir= "/home/", title='Please select a directory')
+    app.sourceFile=app.sourceFile[app.sourceFile.find('SRR'):]
+    return
+
+def calculate():
+    lbl.config(text="Starting the pipeline.")
+    lbl.config(text="Cheking for missing modules and installing them if missing.")
+    os.system('python3 modules.py')
+    lbl.config(text="Done.")
+    lbl.config(text="Starting the whole genome alignment. This takes time.")
+    if 'Linux' in o_sys:
+        os.system('python3 Aln_WG.py '+app.sourceFile+' '+app.sourceFolder)
+        lbl.config(text="Done!")
+        os.system('python3 Aln_MG.py '+app.sourceFile)
+        os.system('python3 Aln_PG.py '+app.sourceFile)
+        os.system('python3 Aln_M1G.py '+app.sourceFile)
+        os.system('python3 Obtain_counts.py '+app.sourceFile)
+        os.system('python3 pileup_ok.py '+app.sourceFile)
+    if 'Windows' in o_sys:
+        subprocess.check_call(['wsl','python3', 'Aln_WG.py ',app.sourceFile,' ', app.sourceFolder])
+        lbl.config(text="Done!")
+        subprocess.check_call(['wsl','python3', 'Aln_MG.py ',app.sourceFile])
+        subprocess.check_call(['wsl','python3', 'Aln_PG.py ',app.sourceFile])
+        subprocess.check_call(['wsl','python3', 'Aln_M1G.py ',app.sourceFile])
+        subprocess.check_call(['wsl','python3', 'Obtain_counts.py ',app.sourceFile])
+        subprocess.check_call(['wsl','python3','pileup_ok.py ',app.sourceFile])
+
+
+lbl.pack()
+
+text_Widget=tkinter.Text(app, height=1, width=30)
+text_Widget.place(x=50, y=50)
+
+download_Button=tkinter.Button(app, text='Download', width=20, height=1, command=retrieve_SRR)
+download_Button.place(x=300, y=50)
+
+#untar_checkbox_value = tkinter.BooleanVar(app)
+#untar_checkbox = tkinter.Checkbutton(app, text="Untar and delete .gz file", variable=untar_checkbox_value)
+#untar_checkbox.place(x=490, y=50)
+
+untar_Button = tkinter.Button(app, text="Untar and delete .gz file", command= unTar)
+untar_Button.place(x=490, y=50)
+
+genome_Button=tkinter.Button(app, text='Download Genome', width=20, height=1, command=download_Genome)
+genome_Button.place(x=155, y=125)
+
+programs_Button=tkinter.Button(app, text='Download programs', width=20, height=1, command=install_programs)
+programs_Button.place(x=350, y=125)
+
+app.sourceFolder = ''
+b_chooseDir = tkinter.Button(app, text = "Chose Folder", width = 20, height = 3, command = chooseDir)
+b_chooseDir.place(x = 155,y = 200)
+b_chooseDir.width = 100
+
+app.sourceFile = ''
+b_chooseFile = tkinter.Button(app, text = "Chose File", width = 20, height = 3, command = chooseFile)
+b_chooseFile.place(x = 350,y = 200)
+b_chooseFile.width = 100
+
+
+submit_button = tkinter.Button(app, text="Submit", width = 20, height = 3, command=calculate)
+submit_button.pack(side='bottom', padx=15, pady=15)
+
+app.mainloop()
