@@ -10,9 +10,14 @@ app = tkinter.Tk()
 app.title("App")
 app.geometry('700x750+200+200')
 lbl=tkinter.Label(app, text="")
+#This variable stores the information of the operating system.
 o_sys=platform.system()
 
 def retrieve_SRR():
+    '''
+    This function recieves an SRR accession number and with string methods creates the ftp url where the file is,
+    and dowloads it. It uses different methods depending on the operating system.
+    ''' 
     lbl.config(text="Downloading your selected fastq.gz file.")
     SRR = text_Widget.get("1.0",'end-1c')
     first_digits=SRR[0:6]
@@ -28,6 +33,9 @@ def retrieve_SRR():
 
 
 def unTar():
+    '''
+    This function untars the SRR file previously downloaded and deletes it, keeping only the .fastq file.
+    '''
     lbl.config(text="Extracting the fastq file. This takes a while and freezes the app, don't close it!")
     SRR= text_Widget.get("1.0",'end-1c')
     if 'Linux' in o_sys:
@@ -39,6 +47,9 @@ def unTar():
     lbl.config(text="Done!")
 
 def download_Genome():
+    '''
+    This function calls the scripts to download the Human genome and move the files where they need to be.
+    '''
     lbl.config(text="Downloading and extracting reference genome. This takes a while and freezes the app, don't close it!")
     if 'Linux' in o_sys:
         os.system('bash download_genome_index.sh')
@@ -47,23 +58,35 @@ def download_Genome():
     lbl.config(text="Done")
 
 def install_programs():
+    '''
+    This function calls the script used to setup anaconda and the required packages.
+    '''
     if 'Linux' in o_sys:
         print(os.system('bash anaconda_setup.sh'))
     if 'Windows' in o_sys:
         print(subprocess.check_call(['wsl', 'python3','anaconda_setup.py']))
 
 def chooseDir():
+    '''
+    This function stores the directory where the samples are stored on a variable for later use.
+    '''
     app.sourceFolder =  filedialog.askdirectory(parent=app, initialdir= "/home/", title='Please select a directory')
     app.sourceFolder=app.sourceFolder+'/'
     return
 
 
 def chooseFile():
+    '''
+    This function stores in a variable the path to the file to analyze.
+    '''
     app.sourceFile = filedialog.askopenfilename(parent=app, initialdir= "/home/", title='Please select a directory')
     app.sourceFile=app.sourceFile[app.sourceFile.find('SRR'):]
     return
 
 def calculate():
+    '''
+    This function calls the pipeline :)
+    '''
     lbl.config(text="Starting the pipeline.")
     lbl.config(text="Cheking for missing modules and installing them if missing.")
     os.system('python3 modules.py')
@@ -94,10 +117,6 @@ text_Widget.place(x=50, y=50)
 
 download_Button=tkinter.Button(app, text='Download', width=20, height=1, command=retrieve_SRR)
 download_Button.place(x=300, y=50)
-
-#untar_checkbox_value = tkinter.BooleanVar(app)
-#untar_checkbox = tkinter.Checkbutton(app, text="Untar and delete .gz file", variable=untar_checkbox_value)
-#untar_checkbox.place(x=490, y=50)
 
 untar_Button = tkinter.Button(app, text="Untar and delete .gz file", command= unTar)
 untar_Button.place(x=490, y=50)
