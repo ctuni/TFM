@@ -74,7 +74,7 @@ if sample in samples:
         os.system('samtools index '+sample_name+'_WGloc_only_trna_sort.bam')
 
         #######SOFT CLIPPING###### remove clipped bases from a BAM file, clipped bases can be adapter sequences.
-        os.system('java -jar jvarkit/dist/biostar84452.jar '+sample_name+'_WGloc_only_trna_sort.bam > '+sample_name+'_WGloc_only_trna_soft_clipped_removed.bam')
+        os.system('java -jar ../../../Scripts/jvarkit/dist/biostar84452.jar '+sample_name+'_WGloc_only_trna_sort.bam > '+sample_name+'_WGloc_only_trna_soft_clipped_removed.bam')
 
         os.system('samtools sort '+sample_name+'_WGloc_only_trna_soft_clipped_removed.bam'+ ' -o ' +sample_name+'_WGloc_only_trna_soft_clipped_removed_sort.bam')
 
