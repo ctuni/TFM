@@ -18,11 +18,8 @@ print ('Obtaining counts')
 #Obtain counts for mature tRNA.
 os.system('samtools idxstats '+'../Final_results/'+sample+'all_mature_sort.bam >'+sample+'all_mature_sort.txt')
 
-
 #Obtain counts for precuror tRNA.
 os.system('samtools idxstats '+'../Final_results/'+sample+'_PGloc_mapped_sort.bam >'+sample+'all_precursor_sort.txt')
-
-
 
 ########Obtain the total number of counts for each family taking in to account the precursor tRNA that we have for each family.
 #Open dictionary of families for each tRNA (tRNA: familyID). The key of the dictionary is the id of a precursor tRNA and the values is the family of the precursor. 

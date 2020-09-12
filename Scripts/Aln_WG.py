@@ -40,7 +40,7 @@ if sample in samples:
 
         #####ALIGNMENT WITH THE WHOLE GENOME#######
 	
-        #In this step we only obtain the bam file directly and only for the mapped reads (https://rnaseqmalta.wordpress.com/2013/09/09/how-to-make-bowtie2-output-as-bam/)
+        #In this step we only obtain the bam file directly and only for the mapped reads
         if not os.path.exists('../Results/'+sample_name+'/Alignment_WG/'):
             os.makedirs('../Results/'+sample_name+'/Alignment_WG/')
         
@@ -116,8 +116,6 @@ if sample in samples:
                     if int(num1) > 3:
                         out_id.write(qname+'\n')
 
-			
-
 		
         out_id.close()
 
@@ -145,8 +143,8 @@ if sample in samples:
         #####Obtain the input for the aligment with the mature genome
 
         print ('12.Obtain the input for the aligment with the mature genome (mature reads + unmapped reads)')
-        #Marge the mature file of reads and the unmmaped reads, in order to peform the aligment with the mature genome:
+        #Merge the mature file of reads and the unmmaped reads, in order to peform the aligment with the mature genome:
         os.system('bedtools bamtofastq -i '+sample_name+'_WGloc_only_trna_mature.bam -fq '+sample_name+'_WGloc_only_trna_mature.fastq')
 
-        #Marge fastq 
+        #Merge fastq 
         os.system('cat '+sample_name+'_WGloc_only_trna_mature.fastq '+sample_name+'_unmapped_WGloc.fastq > '+sample_name+'_WGloc_only_trna_mature_and_unmapped.fastq')

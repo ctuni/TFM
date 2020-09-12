@@ -28,8 +28,6 @@ prec_length=ast.literal_eval(prec_length)
 #Load the dictionary of families. In order to use it when we classify the precursor tRNA in families. 
 fam=open('../../../Reference_Genomes/info/families_grups/info_families_id_dic.fa','r')
 
-
-
 fam=fam.readlines()
 
 fam=str(fam).replace('["','').replace('"]','')
@@ -37,11 +35,8 @@ fam=str(fam).replace('["','').replace('"]','')
 #We have s string so we transform it to a dictionary. 
 fam=ast.literal_eval(fam)
 
-
 tRNA_total=open(sample+'_all_base_calling_by_pos_CORRECT_OK.txt','w')
 tRNA_total.write('TRNA-POS'+'\t'+'A'+'\t'+'C'+'\t'+'G'+'\t'+'T'+'\t'+'REF-COUNTS'+'\n')
-
-
 
 #intron info
 tRNA_intron_info=('../../../Reference_Genomes/info/intron_info.txt','r')
@@ -132,7 +127,7 @@ for file in files:
 		if bam_type=='mature':
 			pos=record['pos']+1
 
-		#La base de referencia esta repetida ya que cuando hemos creado tRNA_info lo hemos anadido, ahora eliminamos para que no este repetida. 
+		#Reference base is repeated since when we created tRNA_info it has been aded, now we delete it
 
 		tRNA_info=tRNA_info.split(' ')
 		tRNA_info.remove(str(ref_base)+':'+str(record[ref_base]))
