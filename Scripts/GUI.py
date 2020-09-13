@@ -8,7 +8,7 @@ import subprocess
 
 app = tkinter.Tk()
 app.title("App")
-app.geometry('700x750+200+200')
+app.geometry('700x500+200+200')
 lbl=tkinter.Label(app, text="")
 #This variable stores the information of the operating system.
 o_sys=platform.system()
@@ -63,8 +63,14 @@ def install_programs():
     '''
     if 'Linux' in o_sys:
         print(os.system('bash anaconda_setup.sh'))
+        os.system('sudo apt-get install libcurl4-openssl-dev libxml2-dev')
+        os.system('sudo apt-get install libssl-dev')
+        os.system('sudo add-apt-repository -y ppa:cran/imagemagick')
+        os.system('sudo apt-get update')
+        os.system('sudo apt-get install -y libmagick++-dev')
     if 'Windows' in o_sys:
         print(subprocess.check_call(['wsl', 'python3','anaconda_setup.py']))
+        subprocess.check_call(['wsl', 'sudo apt-get install libcurl4-openssl-dev libxml2-dev'])
 
 def chooseDir():
     '''
@@ -134,17 +140,9 @@ def r_script():
     This function launches an R script aimed at doing a differential expression anlysis of the results obtained from the pipeline
     '''
     if 'Linux' in o_sys:
-        os.system('sudo apt-get install libcurl4-openssl-dev libxml2-dev')
-        os.system('sudo apt-get install libssl-dev')
-        os.system('sudo add-apt-repository -y ppa:cran/imagemagick')
-        os.system('sudo apt-get update')
-        os.system('sudo apt-get install -y libmagick++-dev')
-        os.system('chmod +x DEG_analysis.r')
-        subprocess.call('DEG_analysis.r')
+        subprocess.call (["/usr/bin/Rscript", "--vanilla", "DEG_analysis.r"])
     if 'Windows' in o_sys:
-        subprocess.check_call(['wsl', 'sudo apt-get install libcurl4-openssl-dev libxml2-dev'])
-        subprocess.check_call(['wsl', 'chmod +x', 'DEG_analysis.r'])
-        subprocess.check_call(['wsl', 'subprocess.call(\'DEG_analysis.r\')'])
+        subprocess.check_call(['wsl', 'subprocess.call (["/usr/bin/Rscript", "--vanilla", "DEG_analysis.r"])'])
 
 lbl.pack()
 
@@ -173,6 +171,8 @@ b_chooseFile = tkinter.Button(app, text = "Chose File", width = 20, height = 3, 
 b_chooseFile.place(x = 350,y = 200)
 b_chooseFile.width = 100
 
+r_button=tkinter.Button(app, text="DEG analysis with R", width=20, height=3, command=r_script)
+r_button.pack(side='bottom', padx=15, pady=15)
 
 submit_button = tkinter.Button(app, text="Submit", width = 20, height = 3, command=calculate)
 submit_button.pack(side='bottom', padx=15, pady=15)
