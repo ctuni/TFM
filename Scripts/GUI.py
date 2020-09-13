@@ -63,14 +63,8 @@ def install_programs():
     '''
     if 'Linux' in o_sys:
         print(os.system('bash anaconda_setup.sh'))
-        os.system('sudo apt-get install libcurl4-openssl-dev libxml2-dev')
-        os.system('sudo apt-get install libssl-dev')
-        os.system('sudo add-apt-repository -y ppa:cran/imagemagick')
-        os.system('sudo apt-get update')
-        os.system('sudo apt-get install -y libmagick++-dev')
     if 'Windows' in o_sys:
         print(subprocess.check_call(['wsl', 'python3','anaconda_setup.py']))
-        subprocess.check_call(['wsl', 'sudo apt-get install libcurl4-openssl-dev libxml2-dev'])
 
 def chooseDir():
     '''
@@ -140,10 +134,15 @@ def r_script():
     This function launches an R script aimed at doing a differential expression anlysis of the results obtained from the pipeline
     '''
     if 'Linux' in o_sys:
-        subprocess.call (["/usr/bin/Rscript", "--vanilla", "DEG_analysis.r"])
+        subprocess.call(["/usr/bin/Rscript", "--vanilla", "DEG_analysis.r"])
     if 'Windows' in o_sys:
-        subprocess.check_call(['wsl', 'subprocess.call (["/usr/bin/Rscript", "--vanilla", "DEG_analysis.r"])'])
-
+        output = str(subprocess.getoutput('whoami'))
+        user=output.split("\\",1)[1]
+        path='C:\\Users\\'+user
+        os.system('cd '+path)
+        os.system('mkdir r_libraries')
+        path='C:/Users/'+user+'/r_libraries'
+        os.system('Rscript DEG_analysis_win.r '+path)
 lbl.pack()
 
 text_Widget=tkinter.Text(app, height=1, width=30)

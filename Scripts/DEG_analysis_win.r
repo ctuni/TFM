@@ -1,14 +1,14 @@
 #! /usr/bin/Rscript
 
 # PIPELINE FOR DIFFERENTIAL EXPRESION ANALYSIS FOR LINUX
-
+args <- commandArgs(trailingOnly = TRUE)
 list.of.packages <- c("magick","pheatmap","BiocManager")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
-if(length(new.packages)) install.packages(new.packages)
+if(length(new.packages)) install.packages(new.packages, lib=args[1])
 
 list.of.packages <- c("Rsubread", "GenomicAlignments","GenomicFeatures","Rsamtools", "edgeR", "DESeq2","vsn","Glimma")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
-if(length(new.packages)) BiocManager::install(new.packages)
+if(length(new.packages)) BiocManager::install(new.packages, lib=args[1])
 
 rm(list.of.packages)
 rm(new.packages)
