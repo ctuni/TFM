@@ -95,20 +95,56 @@ def calculate():
     if 'Linux' in o_sys:
         os.system('python3 Aln_WG.py '+app.sourceFile+' '+app.sourceFolder)
         lbl.config(text="Done!")
+        lbl.config(text="Aligning versus the mature genome.")
         os.system('python3 Aln_MG.py '+app.sourceFile)
+        lbl.config(text="Done!")
+        lbl.config(text="Aligning versus the precursor genome.")
         os.system('python3 Aln_PG.py '+app.sourceFile)
+        lbl.config(text="Done!")
+        lbl.config(text="Aligning versus the mature genome with one mismatch in the seed.")
         os.system('python3 Aln_M1G.py '+app.sourceFile)
+        lbl.config(text="Done!")
+        lbl.config(text="Obtaining the final counts.")
         os.system('python3 Obtain_counts.py '+app.sourceFile)
+        lbl.config(text="Done!")
+        lbl.config(text="Doing the pileup.")
         os.system('python3 pileup_ok.py '+app.sourceFile)
+        lbl.config(text="Done!")
     if 'Windows' in o_sys:
         subprocess.check_call(['wsl','python3', 'Aln_WG.py ',app.sourceFile,' ', app.sourceFolder])
         lbl.config(text="Done!")
+        lbl.config(text="Aligning versus the mature genome.")
         subprocess.check_call(['wsl','python3', 'Aln_MG.py ',app.sourceFile])
+        lbl.config(text="Done!")
+        lbl.config(text="Aligning versus the precursor genome.")
         subprocess.check_call(['wsl','python3', 'Aln_PG.py ',app.sourceFile])
+        lbl.config(text="Done!")
+        lbl.config(text="Aligning versus the mature genome with one mismatch in the seed.")
         subprocess.check_call(['wsl','python3', 'Aln_M1G.py ',app.sourceFile])
+        lbl.config(text="Done!")
+        lbl.config(text="Obtaining the final counts.")
         subprocess.check_call(['wsl','python3', 'Obtain_counts.py ',app.sourceFile])
+        lbl.config(text="Done!")
+        lbl.config(text="Doing the pileup.")
         subprocess.check_call(['wsl','python3','pileup_ok.py ',app.sourceFile])
+        lbl.config(text="Done!")
 
+def r_script():
+    '''
+    This function launches an R script aimed at doing a differential expression anlysis of the results obtained from the pipeline
+    '''
+    if 'Linux' in o_sys:
+        os.system('sudo apt-get install libcurl4-openssl-dev libxml2-dev')
+        os.system('sudo apt-get install libssl-dev')
+        os.system('sudo add-apt-repository -y ppa:cran/imagemagick')
+        os.system('sudo apt-get update')
+        os.system('sudo apt-get install -y libmagick++-dev')
+        os.system('chmod +x DEG_analysis.r')
+        subprocess.call('DEG_analysis.r')
+    if 'Windows' in o_sys:
+        subprocess.check_call(['wsl', 'sudo apt-get install libcurl4-openssl-dev libxml2-dev'])
+        subprocess.check_call(['wsl', 'chmod +x', 'DEG_analysis.r'])
+        subprocess.check_call(['wsl', 'subprocess.call(\'DEG_analysis.r\')'])
 
 lbl.pack()
 
