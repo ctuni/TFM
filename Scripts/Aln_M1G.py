@@ -36,7 +36,7 @@ os.system('bowtie2 --local -p 8 -N 1 -x '+refgen_path+'families_tRNA_refgenome '
 os.system('samtools sort '+sample+'_MG_1M_loc_mapped.bam'+ ' -o ' +sample+'_MG_1M_loc_mapped_sort.bam')
 
 #####soft clipping####
-os.system('java -jar /home/cris/jvarkit/dist/biostar84452.jar '+sample+'_MG_1M_loc_mapped_sort.bam > '+sample+'_MG_1M_loc_mapped_soft_clipped_removed.bam')
+os.system('java -jar ../../../Scripts/jvarkit/dist/biostar84452.jar '+sample+'_MG_1M_loc_mapped_sort.bam > '+sample+'_MG_1M_loc_mapped_soft_clipped_removed.bam')
 
 #Process the sam file obtained
 print ('Process the bam file obtained')

@@ -33,7 +33,7 @@ print ('Performing the aligment with the mature genome')
 os.system('bowtie2 --local -p 8 -N 0 -x '+refgen_path+'families_tRNA_refgenome ../Alignment_WG/'+sample_name+'_WGloc_only_trna_mature_and_unmapped.fastq'+' --un '+sample_name+'_unmapped_MGloc.fastq'+' | samtools view -bSF4 - > '+sample_name+'_MGloc_mapped.bam')
 
 #####soft clipping####
-os.system('java -jar /home/cris/jvarkit/dist/biostar84452.jar '+sample_name+'_MGloc_mapped.bam > '+sample_name+'_MGloc_mapped_soft_clipped_removed.bam')
+os.system('java -jar ../../../Scripts/jvarkit/dist/biostar84452.jar '+sample_name+'_MGloc_mapped.bam > '+sample_name+'_MGloc_mapped_soft_clipped_removed.bam')
 
 #Process the bam file obtained
 print ('Process the bam file obtained')
