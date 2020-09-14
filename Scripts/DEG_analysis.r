@@ -25,11 +25,11 @@ library("Glimma")
 library("pheatmap")
 
 #1-Obtain count matrix.
-tmp_total <- read.delim("/home/cris/Baixades/Counts_by_gene_total_for_DESeq2.txt",row.names = 1)
+tmp_total <- read.delim("../Results/R_files/Counts_by_gene_total_for_DESeq2.txt",row.names = 1)
 tmp_total
 
 #2-Obtain sample info.
-sampleInfo_total <- read.delim("/home/cris/Baixades/sample_data.txt")
+sampleInfo_total <- read.delim("../Results/R_files/sample_data.txt")
 
 #3-Use the count matrix and the sample info to create the final matrix.
 deseqdata_total <- DESeqDataSetFromMatrix(countData=tmp_total, colData=sampleInfo_total, design=~Condition)

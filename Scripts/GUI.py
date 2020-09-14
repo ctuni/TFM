@@ -129,6 +129,11 @@ def calculate():
         subprocess.check_call(['wsl','python3','pileup_ok.py ',app.sourceFile])
         lbl.config(text="Done!")
 
+def r_preparation():
+    '''
+    This script takes all the counts step result files and joins them in a single file in order to analyse them in R
+    '''
+    os.system('python3 join_results.py')
 def r_script():
     '''
     This function launches an R script aimed at doing a differential expression anlysis of the results obtained from the pipeline
@@ -136,13 +141,8 @@ def r_script():
     if 'Linux' in o_sys:
         subprocess.call(["/usr/bin/Rscript", "--vanilla", "DEG_analysis.r"])
     if 'Windows' in o_sys:
-        output = str(subprocess.getoutput('whoami'))
-        user=output.split("\\",1)[1]
-        path='C:\\Users\\'+user
-        os.system('cd '+path)
-        os.system('mkdir r_libraries')
-        path='C:/Users/'+user+'/r_libraries'
-        os.system('Rscript DEG_analysis_win.r '+path)
+        print('In order to run th DEG analysis in windows, close the GUI and write the following code into the console:')
+        print('Rscript DEG_analysis.r')
 lbl.pack()
 
 text_Widget=tkinter.Text(app, height=1, width=30)
@@ -172,6 +172,9 @@ b_chooseFile.width = 100
 
 r_button=tkinter.Button(app, text="DEG analysis with R", width=20, height=3, command=r_script)
 r_button.pack(side='bottom', padx=15, pady=15)
+
+r_prep=tkinter.Button(app, text="Join results for R", width=20, height=1, command=r_preparation)
+r_prep.pack(side='bottom', padx=15, pady=15)
 
 submit_button = tkinter.Button(app, text="Submit", width = 20, height = 3, command=calculate)
 submit_button.pack(side='bottom', padx=15, pady=15)
