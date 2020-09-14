@@ -79,18 +79,18 @@ des$sizeFactor
 #EXAMPLE: condition ADAT2 vs CONTROL, tells you that the estimates are of the logarithmic fold change log2(ADAT2/CONTROL)
 res <- results(des, contrast=c("Condition", "Treated", "Control"),  pAdjustMethod="BH")
 
-write.table(res, file = "../Results/CRG_Result.txt", sep = "\t",
+write.table(res, file = "../Results/Conditions_Result.txt", sep = "\t",
             row.names = TRUE, col.names = NA)
 
 #We can order our results table by the smallest p value:
 resOrdered <- res[order(res$pvalue),]
 dev.off()
-pdf("../Results/heatmap_total_CRG.pdf")
+pdf("../Results/heatmap_total.pdf")
 
 pheatmap(assay(ntd), cluster_rows=T, show_rownames=T, show_colnames = T,
          cluster_cols=FALSE,fontsize_row=0.5, clustering_method="ward.D")
 
-write.table(assay(ntd), file = "../Results/counts_total_heatmap_CRG.txt", sep = "\t",
+write.table(assay(ntd), file = "../Results/counts_total_heatmap.txt", sep = "\t",
             row.names = TRUE, col.names = NA)
 
 res_data <- as.data.frame(assay(ntd))
