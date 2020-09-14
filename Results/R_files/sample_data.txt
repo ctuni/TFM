@@ -1,0 +1,7 @@
+ID	Condition
+RC12_Control	Control
+RC14_Control	Control
+RC15_Control	Control
+RC17_Treated	Treated
+RC18_Treated	Treated
+RC19_Treated	Treated
