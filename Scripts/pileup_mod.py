@@ -4,6 +4,10 @@ import sys
 import os
 import ast
 
+####!!!!
+from Bio import SeqIO
+####!!!!
+
 fullCmdArguments= sys.argv
 argumentList= fullCmdArguments[1:]
 path = os.path.dirname(os.path.realpath(__file__)).split('/')[:-1]
@@ -28,6 +32,14 @@ prec_length=ast.literal_eval(prec_length)
 #Load the dictionary of families. In order to use it when we classify the precursor tRNA in families. 
 fam=open('../../../Reference_Genomes/info/families_grups/info_families_id_dic.fa','r')
 
+###!!!!!!
+
+#Create dictionary with nucleotide sequence for each family.
+family_sequence = SeqIO.to_dict(SeqIO.parse('../../../Reference_Genomes/Modifications_files/Ref_seq/families_tRNA_refgenome.fa', "fasta"))
+
+
+
+####!!!!!
 fam=fam.readlines()
 
 fam=str(fam).replace('["','').replace('"]','')
@@ -35,11 +47,14 @@ fam=str(fam).replace('["','').replace('"]','')
 #We have s string so we transform it to a dictionary. 
 fam=ast.literal_eval(fam)
 
+
 tRNA_total=open(sample+'_all_base_calling_by_pos_CORRECT_OK.txt','w')
 tRNA_total.write('TRNA-POS'+'\t'+'A'+'\t'+'C'+'\t'+'G'+'\t'+'T'+'\t'+'REF-COUNTS'+'\n')
 
+
+
 #intron info
-tRNA_intron_info=('../../../Reference_Genomes/info/intron_info.txt','r')
+tRNA_intron_info=open('../../../Reference_Genomes/info/intron_info.txt','r')
 
 tRNA_intron={}
 
@@ -80,6 +95,7 @@ for file in files:
 		bam_type='precursor'
 	
 	ref_genome=''
+
 	if 'mature' in file:
 		ref_genome='../../../Reference_Genomes/Modifications_files/Ref_seq/families_tRNA_refgenome.fa'
 	if 'PG' in file:
@@ -98,8 +114,8 @@ for file in files:
 		tRNA_info='REF-'+str(record['ref'])+':'+str(record[ref_base])+' '+'A:'+str(record['A'])+' '+'C:'+str(record['C'])+' '+'G:'+str(record['G'])+' '+'T:'+str(record['T'])
 
 		tRNA=record['chrom']
-
 		
+
 		pos=''
 		ref=record['ref']
 		#Positions of the precursor are not the same as the positions in the mature genome since we have the leading and trailing regions and the introns. So we have to transform the positions from the precursor genome to be like the mature ones. 
@@ -127,7 +143,7 @@ for file in files:
 		if bam_type=='mature':
 			pos=record['pos']+1
 
-		#Reference base is repeated since when we created tRNA_info it has been aded, now we delete it
+		#La base de referencia esta repetida ya que cuando hemos creado tRNA_info lo hemos anadido, ahora eliminamos para que no este repetida. 
 
 		tRNA_info=tRNA_info.split(' ')
 		tRNA_info.remove(str(ref_base)+':'+str(record[ref_base]))
@@ -150,10 +166,15 @@ for file in files:
 		for position in positions:
 			file_base_call.write(str(position)+'\t'+str(positions[position])+'\n')
 
-	
 	for trna in tRNA_all:
+
+		
 		positions=tRNA_all[trna]
+
+		###!!!!!
 		pos_used=[]
+		###
+
 		for position in positions:
 			bases=positions[position]
 			def take_first(elem):
@@ -171,7 +192,6 @@ for file in files:
 				val=val.split(':')[1]
 				values=values+val+'\t'
 			values=values[:-1]
-
 			
 			if bam_type=='precursor':
 				trna_fam=fam[trna[:-3]]
@@ -181,12 +201,51 @@ for file in files:
 					pos=correct_pos+','+'74'+','+'75'+','+'76'
 					pos=pos.split(',')
 					correct_pos=pos[position-1]
+
+					####!!!!!
+					pos_used.append(correct_pos)
+					####!!!!!
+
 					tRNA_total.write(trna_fam+':'+str(position)+':'+ref.split(':')[0]+':'+correct_pos+'\t'+values+'\t'+ref.split(':')[1]+'\n')
+
 			else:
 				if trna in tRNA_pos_ref:
 					correct_pos=tRNA_pos_ref[trna]
 					pos=correct_pos+','+'74'+','+'75'+','+'76'
 					pos=pos.split(',')
-					#print (trna)
 					correct_pos=pos[position-1]
+
+					####!!!
+					pos_used.append(correct_pos)
+					####!!!!
+
 					tRNA_total.write(trna+':'+str(position)+':'+ref.split(':')[0]+':'+correct_pos+'\t'+values+'\t'+ref.split(':')[1]+'\n')
+
+		#####!!!!!
+		
+	
+		if bam_type=='precursor':
+			trna=fam[trna[:-3]]
+			pos_ref = tRNA_pos_ref[trna]
+			pos_ref = pos_ref.split(',')
+			pos = list(range(1, len(pos_ref)+1))
+			for e in range(len(pos_ref)):
+				if pos_ref[e] not in pos_used:
+					values='0'+'\t'+'0'+'\t'+'0'+'\t'+'0'
+					ref_nuc_seq=(family_sequence[trna].seq)[e].upper()
+					tRNA_total.write(trna+':'+str(pos[e])+':REF-'+ref_nuc_seq+':'+pos_ref[e]+'\t'+values+'\t'+'0'+'\n')
+			
+
+		else:
+			pos_ref = tRNA_pos_ref[trna]
+			pos_ref = pos_ref.split(',')			
+			pos = list(range(1, len(pos_ref)+1))
+			for e in range(len(pos_ref)):
+				if pos_ref[e] not in pos_used:
+					values='0'+'\t'+'0'+'\t'+'0'+'\t'+'0'
+					ref_nuc_seq=(family_sequence[trna].seq)[e].upper()
+					tRNA_total.write(trna+':'+str(pos[e])+':REF-'+ref_nuc_seq+':'+pos_ref[e]+'\t'+values+'\t'+'0'+'\n')
+			
+		
+
+			
