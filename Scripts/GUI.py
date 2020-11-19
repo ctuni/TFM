@@ -30,7 +30,7 @@ def retrieve_SRR():
     first_digits=SRR[0:6]
     last_digits='00'+SRR[-1:]
     ftp_link='ftp://ftp.sra.ebi.ac.uk/vol1/fastq/'+first_digits+'/'+last_digits+'/'+SRR+'/'+SRR+'.fastq.gz'
-    if 'Linux' in o_sys:
+    if 'Linux' in o_sys or 'Darwin' in o_sys:
         os.system('cd ../')
         os.system('wget '+ftp_link)
     elif 'Windows' in o_sys:
@@ -45,7 +45,7 @@ def unTar():
     '''
     lbl.config(text="Extracting the fastq file. This takes a while and freezes the app, don't close it!")
     SRR= text_Widget.get("1.0",'end-1c')
-    if 'Linux' in o_sys:
+    if 'Linux' in o_sys or 'Darwin' in o_sys:
         os.system('gunzip '+SRR+'.fastq.gz')
         os.system('rm '+SRR+'.fastq.gz')
     elif 'Windows' in o_sys:
@@ -58,7 +58,7 @@ def download_Genome():
     This function calls the scripts to download the Human genome and move the files where they need to be.
     '''
     lbl.config(text="Downloading and extracting reference genome. This takes a while and freezes the app, don't close it!")
-    if 'Linux' in o_sys:
+    if 'Linux' in o_sys or 'Darwin' in o_sys:
         os.system('bash download_genome_index.sh')
     elif 'Windows' in o_sys:
         subprocess.check_call(['wsl', 'python3','download_genome_index.py'])
@@ -68,9 +68,9 @@ def install_programs():
     '''
     This function calls the script used to setup anaconda and the required packages.
     '''
-    if 'Linux' in o_sys:
+    if 'Linux' in o_sys or 'Darwin' in o_sys:
         print(os.system('bash anaconda_setup.sh'))
-    if 'Windows' in o_sys:
+    elif 'Windows' in o_sys:
         print(subprocess.check_call(['wsl', 'python3','anaconda_setup.py']))
 
 def chooseDir():
@@ -126,18 +126,18 @@ def rename_group2():
     return
 
 def countsAnalysis():
-    if 'Linux' in o_sys:
+    if 'Linux' in o_sys or 'Darwin' in o_sys:
         subprocess.call(["/usr/bin/Rscript", "--vanilla", "PLOTS_Counts_Total.r"])
         subprocess.call(["/usr/bin/Rscript", "--vanilla", "PLOTS_Prop_Mature_Precursor.r"])
-    if 'Windows' in o_sys:
+    elif 'Windows' in o_sys:
         print('In order to run th DEG analysis in windows, close the GUI and write the following code into the console:')
         print('Rscript PLOTS_Counts_Total.r')
         print('Rscript PLOTS_Prop_Mature_Precursor.r')
 
 def modAnalysis():
-    if 'Linux' in o_sys:
+    if 'Linux' in o_sys or 'Darwin' in o_sys:
         subprocess.call(["/usr/bin/Rscript", "--vanilla", "PLOTS_Modifications_Analisis.r"])
-    if 'Windows' in o_sys:
+    elif 'Windows' in o_sys:
         print('In order to run th DEG analysis in windows, close the GUI and write the following code into the console:')
         print('Rscript PLOTS_Modifications_Analisis.r')
 
@@ -152,7 +152,7 @@ def calculate():
     os.system('python3 modules.py')
     lbl.config(text="Done.")
     lbl.config(text="Starting the whole genome alignment. This takes time.")
-    if 'Linux' in o_sys:
+    if 'Linux' in o_sys or 'Darwin' in o_sys:
         os.system('python3 Aln_WG.py '+app.sourceFile+' '+app.sourceFolder)
         lbl.config(text="Done!")
         lbl.config(text="Aligning versus the mature genome.")
@@ -170,7 +170,7 @@ def calculate():
         lbl.config(text="Doing the pileup.")
         os.system('python3 pileup_mod.py '+app.sourceFile)
         lbl.config(text="Done!")
-    if 'Windows' in o_sys:
+    elif 'Windows' in o_sys:
         subprocess.check_call(['wsl','python3', 'Aln_WG.py ',app.sourceFile,' ', app.sourceFolder])
         lbl.config(text="Done!")
         lbl.config(text="Aligning versus the mature genome.")
@@ -198,10 +198,10 @@ def r_script():
     '''
     This function launches an R script aimed at doing a differential expression anlysis of the results obtained from the pipeline
     '''
-    if 'Linux' in o_sys:
+    if 'Linux' in o_sys or 'Darwin' in o_sys:
         subprocess.call(["/usr/bin/Rscript", "--vanilla", "DEG_analysis.r"])
         subprocess.call(["/usr/bin/Rscript", "--vanilla", "iso_test_all.r"])
-    if 'Windows' in o_sys:
+    elif 'Windows' in o_sys:
         print('In order to run th DEG analysis in windows, close the GUI and write the following code into the console:')
         print('Rscript DEG_analysis.r')
         print('Rscript iso_test_all.r')
